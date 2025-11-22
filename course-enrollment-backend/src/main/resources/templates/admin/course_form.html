@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${isEdit ? 'Edit Course' : 'Add Course'} + ' - Admin Dashboard'">Course Form</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 700px;
+            width: 100%;
+        }
+
+        /* Form Box */
+        .form-box {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .form-header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .form-header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .form-header h1 i {
+            color: #667eea;
+        }
+
+        .form-header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Form Groups */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-group label i {
+            color: #667eea;
+            margin-right: 5px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-group select {
+            cursor: pointer;
+            background: white;
+        }
+
+        .required {
+            color: #dc3545;
+            margin-left: 3px;
+        }
+
+        .help-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 25px;
+        }
+
+        .info-box i {
+            color: #2196F3;
+            margin-right: 8px;
+        }
+
+        .info-box p {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* Warning if no categories */
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 25px;
+        }
+
+        .warning-box i {
+            color: #856404;
+            margin-right: 8px;
+        }
+
+        .warning-box p {
+            color: #856404;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .warning-box a {
+            color: #856404;
+            font-weight: bold;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-box {
+                padding: 30px 20px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-box">
+            <!-- Form Header -->
+            <div class="form-header">
+                <h1>
+                    <i th:class="${isEdit ? 'fas fa-edit' : 'fas fa-plus-circle'}"></i>
+                    <span th:text="${isEdit ? 'Edit Course' : 'Add New Course'}">Course Form</span>
+                </h1>
+                <p th:text="${isEdit ? 'Update the course information below' : 'Fill in the details to create a new course'}">Form description</p>
+            </div>
+
+            <!-- Info Box -->
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i>
+                <p>Provide detailed and accurate information to help students understand what they'll learn in this course.</p>
+            </div>
+
+            <!-- Warning if no categories -->
+            <div th:if="${#lists.isEmpty(categories)}" class="warning-box">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p>No categories available! Please <a th:href="@{/admin/categories/add}">create a category</a> first before adding courses.</p>
+            </div>
+
+            <!-- Form -->
+            <form th:action="${isEdit ? '/admin/courses/edit/' + course.id : '/admin/courses/add'}"
+                  method="post"
+                  th:if="${!#lists.isEmpty(categories)}">
+
+                <div class="form-group">
+                    <label for="title">
+                        <i class="fas fa-heading"></i>
+                        Course Title <span class="required">*</span>
+                    </label>
+                    <input type="text"
+                           id="title"
+                           name="title"
+                           th:value="${course.title}"
+                           placeholder="e.g., Introduction to Java Programming"
+                           required
+                           autofocus>
+                    <div class="help-text">Choose a clear, descriptive title for your course</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">
+                        <i class="fas fa-align-left"></i>
+                        Course Description <span class="required">*</span>
+                    </label>
+                    <textarea id="description"
+                              name="description"
+                              placeholder="Describe what students will learn, prerequisites, and course objectives..."
+                              required th:text="${course.description}"></textarea>
+                    <div class="help-text">Provide a comprehensive description of the course content and learning outcomes</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="categoryId">
+                        <i class="fas fa-folder"></i>
+                        Category <span class="required">*</span>
+                    </label>
+                    <select id="categoryId" name="categoryId" required>
+                        <option value="">-- Select a Category --</option>
+                        <option th:each="cat : ${categories}"
+                                th:value="${cat.id}"
+                                th:text="${cat.name}"
+                                th:selected="${isEdit && course.category.id == cat.id}">
+                            Category Name
+                        </option>
+                    </select>
+                    <div class="help-text">Choose the most appropriate category for this course</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="instructorApiId">
+                        <i class="fas fa-user-tie"></i>
+                        Instructor API ID
+                    </label>
+                    <input type="text"
+                           id="instructorApiId"
+                           name="instructorApiId"
+                           th:value="${course.instructorApiId}"
+                           placeholder="Optional: External instructor identifier">
+                    <div class="help-text">Optional field for linking to external instructor data</div>
+                </div>
+
+                <!-- Button Group -->
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        <span th:text="${isEdit ? 'Update Course' : 'Create Course'}">Save</span>
+                    </button>
+                    <a th:href="@{/admin/courses}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </a>
+                </div>
+            </form>
+
+            <!-- Message if no categories -->
+            <div th:if="${#lists.isEmpty(categories)}" style="text-align: center; margin-top: 20px;">
+                <a th:href="@{/admin/categories/add}" class="btn btn-primary" style="display: inline-flex;">
+                    <i class="fas fa-plus"></i>
+                    Create Category First
+                </a>
+                <a th:href="@{/admin/courses}" class="btn btn-secondary" style="display: inline-flex; margin-left: 10px;">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Courses
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

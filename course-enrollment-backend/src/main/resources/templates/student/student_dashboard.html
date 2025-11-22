@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            padding: 60px 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 32px;
+        }
+
+        .success-icon {
+            font-size: 80px;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid #4CAF50;
+            font-size: 18px;
+        }
+
+        .info {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .info p {
+            margin: 10px 0;
+            color: #555;
+            font-size: 16px;
+        }
+
+        .info strong {
+            color: #333;
+        }
+
+        .note {
+            background: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid #ffc107;
+            text-align: left;
+        }
+
+        .actions {
+            margin-top: 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            margin: 5px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #5568d3;
+        }
+
+        .btn-logout {
+            background: #dc3545;
+        }
+
+        .btn-logout:hover {
+            background: #c82333;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="success-icon">✓</div>
+
+    <h1>Student Login Successful!</h1>
+
+    <div class="message">
+        Welcome! You have successfully logged in as a student.
+    </div>
+
+    <div class="info">
+        <p><strong>Email:</strong> <span th:text="${email}"></span></p>
+        <p><strong>Role:</strong> STUDENT</p>
+        <p><strong>Status:</strong> Active</p>
+    </div>
+
+    <div class="note">
+        <strong>📌 Note:</strong> The student dashboard with React frontend is coming soon!
+        This is a temporary success page to confirm your authentication is working correctly.
+    </div>
+
+    <div class="actions">
+        <a href="#" class="btn">Browse Courses (Coming Soon)</a>
+        <a th:href="@{/logout}" class="btn btn-logout">Logout</a>
+    </div>
+</div>
+</body>
+</html>
+

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Manage Categories</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" />
+    <style>
+        :root {
+            --bg: #f5f6fb;
+            --panel: #ffffff;
+            --primary: #6c63ff;
+            --primary-dark: #5146ff;
+            --text: #1e1f25;
+            --muted: #6f7285;
+            --border: #e3e6ef;
+            --danger: #ff6b6b;
+            --success: #12c48b;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--bg);
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            padding: 32px;
+        }
+        .shell {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        header {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        header p {
+            margin: 4px 0 0;
+            color: var(--muted);
+        }
+        header a {
+            text-decoration: none;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 18px;
+            border-radius: 999px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: transform .15s ease, box-shadow .15s ease;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 10px 25px rgba(108,99,255,.25);
+        }
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+        .panel {
+            background: var(--panel);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 20px 60px rgba(15,23,42,.08);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        thead th {
+            text-align: left;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            color: var(--muted);
+            padding-bottom: 12px;
+        }
+        tbody td {
+            padding: 18px 0;
+            border-top: 1px solid var(--border);
+        }
+        .name {
+            font-weight: 600;
+        }
+        .count {
+            background: #eff2ff;
+            color: var(--primary-dark);
+            font-weight: 600;
+            border-radius: 999px;
+            padding: 6px 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+        }
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+        .pill-btn {
+            border: none;
+            border-radius: 999px;
+            padding: 8px 16px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: opacity .15s ease, transform .15s ease;
+        }
+        .pill-btn:hover {
+            opacity: .85;
+            transform: translateY(-1px);
+        }
+        .pill-edit { background: rgba(108,99,255,.15); color: var(--primary-dark); }
+        .pill-delete { background: rgba(255,107,107,.15); color: var(--danger); }
+        .empty {
+            text-align: center;
+            padding: 60px 0;
+            color: var(--muted);
+        }
+        .empty svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 16px;
+        }
+        @media (max-width: 640px) {
+            body { padding: 20px; }
+            header { flex-direction: column; align-items: flex-start; }
+            .actions { flex-direction: column; }
+            table, thead, tbody, th, td, tr { display: block; }
+            tbody td { border: none; padding: 10px 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="shell">
+        <header>
+            <div>
+                <h1>Categories</h1>
+                <p>Organize your catalog by grouping related courses.</p>
+            </div>
+            <a th:href="@{/admin/categories/add}" class="btn btn-primary">+ New Category</a>
+        </header>
+
+        <div class="panel">
+            <table th:if="${#lists.size(categories) > 0}">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Courses</th>
+                        <th style="text-align:right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="cat : ${categories}">
+                        <td class="name" th:text="${cat.name}">Programming</td>
+                        <td>
+                            <span class="count">
+                                <span th:text="${#lists.size(cat.courses)}">0</span>
+                                <small>courses</small>
+                            </span>
+                        </td>
+                        <td>
+                            <div class="actions" style="justify-content:flex-end;">
+                                <a th:href="@{/admin/categories/edit/{id}(id=${cat.id})}" class="pill-btn pill-edit">Edit</a>
+                                <a th:href="@{/admin/categories/delete/{id}(id=${cat.id})}"
+                                   class="pill-btn pill-delete"
+                                   th:attr="data-name=${cat.name}"
+                                   onclick="return confirm('Delete ' + this.dataset.name + '?');">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="empty" th:if="${#lists.isEmpty(categories)}">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 3L2 9l10 6 10-6-10-6zm0 18l-10-6" stroke="#c7cad5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <p>No categories yet. Use the button above to create your first one.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

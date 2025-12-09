@@ -7,15 +7,15 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" />
     <style>
         :root {
-            --bg: #f5f6fb;
+            --bg: #f0f4f8;
             --panel: #ffffff;
-            --primary: #6c63ff;
-            --primary-dark: #5146ff;
+            --primary: #1B3C53;
+            --primary-dark: #234C6A;
             --text: #1e1f25;
             --muted: #6f7285;
             --border: #e3e6ef;
-            --danger: #ff6b6b;
-            --success: #12c48b;
+            --danger: #ef4444;
+            --success: #10b981;
         }
         * {
             box-sizing: border-box;
@@ -152,7 +152,10 @@
                 <h1>Categories</h1>
                 <p>Organize your catalog by grouping related courses.</p>
             </div>
-            <a th:href="@{/admin/categories/add}" class="btn btn-primary">+ New Category</a>
+            <div style="display:flex; gap:8px; align-items:center;">
+                <a class="btn" style="background:transparent; border:1px solid var(--border); color:var(--muted); padding:10px 14px; border-radius:999px;" th:href="@{/admin}">Return to main page</a>
+                <a th:href="@{/admin/categories/add}" class="btn btn-primary">+ New Category</a>
+            </div>
         </header>
 
         <div class="panel">

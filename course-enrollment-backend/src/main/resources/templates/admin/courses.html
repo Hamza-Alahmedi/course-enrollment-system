@@ -7,15 +7,15 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" />
     <style>
         :root {
-            --bg: #f4f6fb;
+            --bg: #f0f4f8;
             --panel: #ffffff;
-            --primary: #6c63ff;
-            --primary-dark: #4f46e5;
+            --primary: #1B3C53;
+            --primary-dark: #234C6A;
             --text: #1f1f28;
             --muted: #6b6f7c;
             --border: #e3e6ef;
-            --accent: #f4f0ff;
-            --accent-text: #4b40c7;
+            --accent: #e0e7ff;
+            --accent-text: #1B3C53;
         }
         * { box-sizing: border-box; }
         body {
@@ -138,6 +138,27 @@
             color: var(--muted);
         }
         .empty svg { width: 72px; height: 72px; margin-bottom: 16px; }
+        .rating-display {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .stars-small {
+            display: flex;
+            gap: 2px;
+        }
+        .star-small {
+            font-size: 16px;
+            color: #d1d5db;
+        }
+        .star-small.filled {
+            color: #fbbf24;
+        }
+        .rating-text {
+            font-size: 13px;
+            color: var(--muted);
+            font-weight: 500;
+        }
         @media (max-width: 768px) {
             body { padding: 18px; }
             header { flex-direction: column; align-items: flex-start; }
@@ -154,7 +175,10 @@
                 <h1>Courses</h1>
                 <p>Manage your entire course catalog from one place.</p>
             </div>
-            <a th:href="@{/admin/courses/add}" class="btn btn-primary">+ New Course</a>
+            <div style="display:flex; gap:8px; align-items:center;">
+                <a class="btn" style="background:transparent; border:1px solid var(--border); color:var(--muted); padding:10px 14px; border-radius:999px;" th:href="@{/admin}">Return to main page</a>
+                <a th:href="@{/admin/courses/add}" class="btn btn-primary">+ New Course</a>
+            </div>
         </header>
 
         <div class="panel">
@@ -163,6 +187,7 @@
                     <tr>
                         <th>Course</th>
                         <th>Category</th>
+                        <th>Rating</th>
                         <th>Enrollments</th>
                         <th style="text-align:right;">Actions</th>
                     </tr>
@@ -180,6 +205,18 @@
                                 </svg>
                                 <span th:text="${course.category.name}">Category</span>
                             </span>
+                        </td>
+                        <td>
+                            <div class="rating-display" th:attr="data-course-id=${course.id}">
+                                <div class="stars-small">
+                                    <span class="star-small">★</span>
+                                    <span class="star-small">★</span>
+                                    <span class="star-small">★</span>
+                                    <span class="star-small">★</span>
+                                    <span class="star-small">★</span>
+                                </div>
+                                <span class="rating-text">(0.0)</span>
+                            </div>
                         </td>
                         <td>
                             <span class="enroll-count">
@@ -212,5 +249,49 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Load ratings on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const ratingDisplays = document.querySelectorAll('.rating-display');
+
+            ratingDisplays.forEach(display => {
+                const courseId = display.getAttribute('data-course-id');
+                loadCourseRating(courseId, display);
+            });
+        });
+
+        async function loadCourseRating(courseId, displayElement) {
+            try {
+                const response = await fetch(`/api/courses/${courseId}/rating/avg`);
+                const data = await response.json();
+
+                if (data.averageRating !== null && data.averageRating > 0) {
+                    updateRatingDisplay(displayElement, data.averageRating);
+                }
+            } catch (error) {
+                console.error('Error loading rating for course ' + courseId + ':', error);
+            }
+        }
+
+        function updateRatingDisplay(displayElement, avgRating) {
+            const stars = displayElement.querySelectorAll('.star-small');
+            const ratingText = displayElement.querySelector('.rating-text');
+
+            const fullStars = Math.floor(avgRating);
+
+            stars.forEach((star, index) => {
+                if (index < fullStars) {
+                    star.classList.add('filled');
+                } else {
+                    star.classList.remove('filled');
+                }
+            });
+
+            if (ratingText) {
+                ratingText.textContent = `(${avgRating.toFixed(1)})`;
+            }
+        }
+    </script>
 </body>
 </html>

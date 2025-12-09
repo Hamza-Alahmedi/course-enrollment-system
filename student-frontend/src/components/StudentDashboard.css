@@ -1,14 +1,14 @@
 /* Dashboard Wrapper */
 .dashboard-wrapper {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    background: #E3E3E3;
 }
 
 /* Top Navigation Bar */
 .top-navbar {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1B3C53 0%, #2c5f7f 100%);
   color: white;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -58,7 +58,7 @@
   width: 45px;
   height: 45px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -100,7 +100,7 @@
 
 .logout-btn:hover {
   background: white;
-  color: #667eea;
+  color: #1B3C53;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
@@ -164,13 +164,13 @@
 }
 
 .tab:hover {
-  border-color: #667eea;
+  border-color: #1B3C53;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+  box-shadow: 0 4px 12px rgba(27, 60, 83, 0.2);
 }
 
 .tab.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #1B3C53 0%, #2c5f7f 100%);
   color: white;
   border-color: transparent;
   box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
@@ -227,8 +227,8 @@
 
 .search-input:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: #1B3C53;
+  box-shadow: 0 0 0 3px rgba(27, 60, 83, 0.1);
 }
 
 .clear-search {
@@ -286,8 +286,8 @@
 
 .category-select:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: #1B3C53;
+  box-shadow: 0 0 0 3px rgba(27, 60, 83, 0.1);
 }
 
 .clear-filters-btn {
@@ -351,7 +351,7 @@
 .course-card:hover {
   transform: translateY(-8px);
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
-  border-color: #667eea;
+  border-color: #113d4a;
 }
 
 .course-card.enrolled-course {
@@ -368,7 +368,7 @@
 .course-category-badge {
   display: inline-block;
   padding: 0.4rem 1rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #1B3C53 0%, #2c5f7f 100%);
   color: white;
   border-radius: 20px;
   font-size: 0.85rem;
@@ -432,7 +432,7 @@
 }
 
 .enroll-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #1B3C53 0%, #2c5f7f 100%);
   color: white;
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
@@ -497,7 +497,7 @@
   height: 50px;
   margin: 0 auto 1rem;
   border: 5px solid #e2e8f0;
-  border-top: 5px solid #667eea;
+  border-top: 5px solid #6366f1;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -505,6 +505,79 @@
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+/* Star Rating Styles */
+.star-rating-container {
+  margin: 1rem 0;
+  padding: 0.8rem;
+  background: #f8fafc;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.rating-section {
+  margin: 1rem 0;
+}
+
+.rating-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #4a5568;
+  margin-bottom: 0.5rem;
+}
+
+.stars {
+  display: flex;
+  gap: 0.3rem;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
+
+.star {
+  font-size: 1.8rem;
+  color: #cbd5e0;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.star.filled {
+  color: #f59e0b;
+  text-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+}
+
+.star.interactive:hover {
+  transform: scale(1.2);
+}
+
+.rating-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  font-size: 0.9rem;
+  color: #718096;
+  flex-wrap: wrap;
+}
+
+.avg-rating {
+  font-weight: 700;
+  color: #2d3748;
+  font-size: 1rem;
+}
+
+.no-rating {
+  font-style: italic;
+  color: #a0aec0;
+}
+
+.user-rating-indicator {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.85rem;
+  font-weight: 600;
 }
 
 .loading-spinner p {

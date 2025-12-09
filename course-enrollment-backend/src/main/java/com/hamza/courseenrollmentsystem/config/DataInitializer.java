@@ -5,7 +5,6 @@
 //import org.springframework.boot.CommandLineRunner;
 //import org.springframework.context.annotation.Bean;
 //import org.springframework.context.annotation.Configuration;
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 //
 //import java.time.LocalDateTime;
 //import java.util.Arrays;
@@ -28,42 +27,40 @@
 //            }
 //
 //            // ----- USERS -----
-//            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-//
 //            User admin = new User();
 //            admin.setUsername("admin");
 //            admin.setEmail("admin@example.com");
-//            admin.setPassword(encoder.encode("admin123"));
+//            admin.setPassword("admin123");
 //            admin.setRole("ADMIN");
 //
 //            User student1 = new User();
 //            student1.setUsername("alice");
 //            student1.setEmail("alice@example.com");
-//            student1.setPassword(encoder.encode("pass123"));
+//            student1.setPassword("pass123");
 //            student1.setRole("STUDENT");
 //
 //            User student2 = new User();
 //            student2.setUsername("bob");
 //            student2.setEmail("bob@example.com");
-//            student2.setPassword(encoder.encode("pass123"));
+//            student2.setPassword("pass123");
 //            student2.setRole("STUDENT");
 //
 //            User student3 = new User();
 //            student3.setUsername("charlie");
 //            student3.setEmail("charlie@example.com");
-//            student3.setPassword(encoder.encode("pass123"));
+//            student3.setPassword("pass123");
 //            student3.setRole("STUDENT");
 //
 //            User student4 = new User();
 //            student4.setUsername("diana");
 //            student4.setEmail("diana@example.com");
-//            student4.setPassword(encoder.encode("pass123"));
+//            student4.setPassword("pass123");
 //            student4.setRole("STUDENT");
 //
 //            User student5 = new User();
 //            student5.setUsername("eve");
 //            student5.setEmail("eve@example.com");
-//            student5.setPassword(encoder.encode("pass123"));
+//            student5.setPassword("pass123");
 //            student5.setRole("STUDENT");
 //
 //            userRepo.saveAll(Arrays.asList(admin, student1, student2, student3, student4, student5));
@@ -145,4 +142,5 @@
 //        };
 //    }
 //}
+//
 //

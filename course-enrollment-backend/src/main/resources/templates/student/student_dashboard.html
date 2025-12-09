@@ -4,138 +4,519 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Dashboard</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" />
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --bg: #f4f6fb;
+            --panel: #ffffff;
+            --primary: #6c63ff;
+            --primary-dark: #4f46e5;
+            --text: #1f1f28;
+            --muted: #6b6f7c;
+            --border: #e3e6ef;
+            --star-empty: #d1d5db;
+            --star-filled: #fbbf24;
         }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
             min-height: 100vh;
+            padding: 32px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        header {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        h1 {
+            font-size: 28px;
+            font-weight: 600;
+        }
+        .user-info {
+            color: var(--muted);
+            font-size: 14px;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 999px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform .15s ease;
+        }
+        .btn-logout {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        .btn-logout:hover {
+            background: #fecaca;
+            transform: translateY(-1px);
+        }
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+        }
+        .course-card {
+            background: var(--panel);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(15,23,42,.08);
+            transition: transform .2s ease, box-shadow .2s ease;
+        }
+        .course-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 40px rgba(15,23,42,.12);
+        }
+        .course-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+        .course-desc {
+            color: var(--muted);
+            font-size: 14px;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+        .rating-section {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+        .rating-label {
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+        .stars {
+            display: flex;
+            gap: 4px;
             align-items: center;
         }
-
-        .container {
-            background: white;
-            padding: 60px 40px;
-            border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            width: 100%;
-            max-width: 600px;
-            text-align: center;
+        .star {
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--star-empty);
+            transition: color .15s ease, transform .15s ease;
         }
-
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 32px;
+        .star.filled {
+            color: var(--star-filled);
         }
-
-        .success-icon {
-            font-size: 80px;
-            color: #4CAF50;
-            margin-bottom: 20px;
+        .star:hover {
+            transform: scale(1.15);
         }
-
-        .message {
-            background: #e8f5e9;
-            color: #2e7d32;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 25px;
-            border-left: 4px solid #4CAF50;
-            font-size: 18px;
+        .star.clickable:hover ~ .star {
+            color: var(--star-empty);
         }
-
-        .info {
-            background: #f5f5f5;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 25px;
-            text-align: left;
+        .avg-rating {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+            font-size: 14px;
+            color: var(--muted);
         }
-
-        .info p {
-            margin: 10px 0;
-            color: #555;
-            font-size: 16px;
-        }
-
-        .info strong {
-            color: #333;
-        }
-
-        .note {
-            background: #fff3cd;
-            color: #856404;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 25px;
-            border-left: 4px solid #ffc107;
-            text-align: left;
-        }
-
-        .actions {
-            margin-top: 30px;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 12px 30px;
-            margin: 5px;
-            background: #667eea;
+        .rate-btn {
+            margin-top: 12px;
+            padding: 8px 16px;
+            background: var(--primary);
             color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            font-size: 16px;
-            font-weight: bold;
-            transition: background 0.3s;
+            border: none;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background .2s ease;
+        }
+        .rate-btn:hover {
+            background: var(--primary-dark);
+        }
+        .your-rating {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+            font-size: 14px;
+            color: var(--primary);
+            font-weight: 500;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: var(--muted);
+        }
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 16px;
         }
 
-        .btn:hover {
-            background: #5568d3;
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
         }
-
-        .btn-logout {
-            background: #dc3545;
+        .modal.show {
+            display: flex;
         }
-
-        .btn-logout:hover {
-            background: #c82333;
+        .modal-content {
+            background: white;
+            padding: 32px;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        .modal-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+        .modal-stars {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+        .modal-star {
+            font-size: 40px;
+            cursor: pointer;
+            color: var(--star-empty);
+            transition: all .2s ease;
+        }
+        .modal-star.filled {
+            color: var(--star-filled);
+        }
+        .modal-star:hover {
+            transform: scale(1.2);
+        }
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        .modal-btn {
+            padding: 12px 24px;
+            border-radius: 999px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all .2s ease;
+        }
+        .modal-btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        .modal-btn-primary:hover {
+            background: var(--primary-dark);
+        }
+        .modal-btn-secondary {
+            background: var(--border);
+            color: var(--text);
+        }
+        .modal-btn-secondary:hover {
+            background: #d1d5db;
+        }
+        @media (max-width: 768px) {
+            body { padding: 16px; }
+            .courses-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="success-icon">✓</div>
+    <div class="container">
+        <header>
+            <div>
+                <h1>My Enrolled Courses</h1>
+                <div class="user-info">Welcome, <span th:text="${email}">student@example.com</span></div>
+            </div>
+            <a th:href="@{/logout}" class="btn btn-logout">Logout</a>
+        </header>
 
-    <h1>Student Login Successful!</h1>
+        <div class="courses-grid" th:if="${enrollments != null and !#lists.isEmpty(enrollments)}">
+            <div class="course-card" th:each="enrollment : ${enrollments}">
+                <div class="course-title" th:text="${enrollment.course.title}">Course Title</div>
+                <div class="course-desc" th:text="${enrollment.course.description}">Course Description</div>
 
-    <div class="message">
-        Welcome! You have successfully logged in as a student.
+                <div class="rating-section">
+                    <div class="rating-label">Course Rating</div>
+                    <div class="avg-rating">
+                        <div class="stars" th:attr="data-avg='0'" th:id="'avg-stars-' + ${enrollment.course.id}">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                        </div>
+                        <span th:id="'avg-text-' + ${enrollment.course.id}">(0.0)</span>
+                    </div>
+
+                    <div th:id="'your-rating-' + ${enrollment.course.id}" class="your-rating" style="display: none;">
+                        Your rating:
+                        <div class="stars">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                        </div>
+                    </div>
+
+                    <button class="rate-btn"
+                            th:data-course-id="${enrollment.course.id}"
+                            th:data-course-title="${enrollment.course.title}"
+                            onclick="openRatingModal(this)">
+                        Rate this Course
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="empty-state" th:if="${enrollments == null or #lists.isEmpty(enrollments)}">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19 7H5a2 2 0 00-2 2v10h18V9a2 2 0 00-2-2zm-7 6H8m4 0h4m-4 3H8m4 0h4M9 5h6l1 2H8l1-2z"
+                      stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <h2>No Enrolled Courses</h2>
+            <p>You haven't enrolled in any courses yet.</p>
+        </div>
     </div>
 
-    <div class="info">
-        <p><strong>Email:</strong> <span th:text="${email}"></span></p>
-        <p><strong>Role:</strong> STUDENT</p>
-        <p><strong>Status:</strong> Active</p>
+    <!-- Rating Modal -->
+    <div id="ratingModal" class="modal">
+        <div class="modal-content">
+            <h2 class="modal-title" id="modalCourseTitle">Rate this Course</h2>
+            <div class="modal-stars" id="modalStars">
+                <span class="modal-star" data-rating="1" onclick="selectRating(1)">★</span>
+                <span class="modal-star" data-rating="2" onclick="selectRating(2)">★</span>
+                <span class="modal-star" data-rating="3" onclick="selectRating(3)">★</span>
+                <span class="modal-star" data-rating="4" onclick="selectRating(4)">★</span>
+                <span class="modal-star" data-rating="5" onclick="selectRating(5)">★</span>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-primary" onclick="submitRating()">Submit</button>
+                <button class="modal-btn modal-btn-secondary" onclick="closeRatingModal()">Cancel</button>
+            </div>
+        </div>
     </div>
 
-    <div class="note">
-        <strong>📌 Note:</strong> The student dashboard with React frontend is coming soon!
-        This is a temporary success page to confirm your authentication is working correctly.
-    </div>
+    <script>
+        let currentCourseId = null;
+        let selectedRating = 0;
 
-    <div class="actions">
-        <a href="#" class="btn">Browse Courses (Coming Soon)</a>
-        <a th:href="@{/logout}" class="btn btn-logout">Logout</a>
-    </div>
-</div>
+        // Load ratings on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllRatings();
+        });
+
+        function loadAllRatings() {
+            const courseCards = document.querySelectorAll('.course-card');
+            courseCards.forEach(card => {
+                const button = card.querySelector('.rate-btn');
+                if (button) {
+                    const courseId = button.getAttribute('data-course-id');
+                    loadCourseRating(courseId);
+                }
+            });
+        }
+
+        async function loadCourseRating(courseId) {
+            try {
+                // Load average rating
+                const avgResponse = await fetch(`/api/courses/${courseId}/rating/avg`, { credentials: 'same-origin' });
+                if (avgResponse.ok) {
+                    const avgData = await avgResponse.json();
+                    if (avgData && avgData.averageRating !== null) {
+                        updateAverageStars(courseId, avgData.averageRating);
+                    }
+                }
+
+                // Load user's rating
+                const userResponse = await fetch(`/api/courses/${courseId}/rating/me`, { credentials: 'same-origin' });
+
+                if (userResponse.status === 401) {
+                    // Not authenticated — don't show rate controls
+                    hideRateButton(courseId);
+                    return;
+                }
+
+                if (userResponse.ok) {
+                    const userData = await userResponse.json();
+
+                    if (userData && userData.rating !== null) {
+                        showUserRating(courseId, userData.rating);
+                        hideRateButton(courseId);
+                    } else {
+                        showRateButton(courseId);
+                    }
+                } else {
+                    // If endpoint returns 204 or 404, show rate button (if enrolled)
+                    showRateButton(courseId);
+                }
+            } catch (error) {
+                console.error('Error loading rating:', error);
+            }
+        }
+
+        function hideRateButton(courseId) {
+            const btn = document.querySelector(`button.rate-btn[data-course-id='${courseId}']`);
+            if (btn) btn.style.display = 'none';
+        }
+
+        function showRateButton(courseId) {
+            const btn = document.querySelector(`button.rate-btn[data-course-id='${courseId}']`);
+            if (btn) btn.style.display = 'inline-flex';
+        }
+
+        function updateAverageStars(courseId, avgRating) {
+            const starsContainer = document.getElementById(`avg-stars-${courseId}`);
+            const textElement = document.getElementById(`avg-text-${courseId}`);
+
+            if (starsContainer) {
+                const stars = starsContainer.querySelectorAll('.star');
+                const fullStars = Math.floor(avgRating);
+
+                stars.forEach((star, index) => {
+                    if (index < fullStars) {
+                        star.classList.add('filled');
+                    } else {
+                        star.classList.remove('filled');
+                    }
+                });
+            }
+
+            if (textElement) {
+                textElement.textContent = `(${avgRating.toFixed(1)})`;
+            }
+        }
+
+        function showUserRating(courseId, rating) {
+            const yourRatingDiv = document.getElementById(`your-rating-${courseId}`);
+
+            if (yourRatingDiv) {
+                yourRatingDiv.style.display = 'flex';
+                const stars = yourRatingDiv.querySelectorAll('.star');
+
+                stars.forEach((star, index) => {
+                    if (index < rating) {
+                        star.classList.add('filled');
+                    } else {
+                        star.classList.remove('filled');
+                    }
+                });
+            }
+        }
+
+        function openRatingModal(button) {
+            currentCourseId = button.getAttribute('data-course-id');
+            const courseTitle = button.getAttribute('data-course-title');
+
+            document.getElementById('modalCourseTitle').textContent = `Rate: ${courseTitle}`;
+            document.getElementById('ratingModal').classList.add('show');
+
+            // Reset stars
+            selectedRating = 0;
+            updateModalStars(0);
+        }
+
+        function closeRatingModal() {
+            document.getElementById('ratingModal').classList.remove('show');
+            currentCourseId = null;
+            selectedRating = 0;
+        }
+
+        function selectRating(rating) {
+            selectedRating = rating;
+            updateModalStars(rating);
+        }
+
+        function updateModalStars(rating) {
+            const stars = document.querySelectorAll('.modal-star');
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.add('filled');
+                } else {
+                    star.classList.remove('filled');
+                }
+            });
+        }
+
+        // Hover effect for modal stars
+        document.querySelectorAll('.modal-star').forEach(star => {
+            star.addEventListener('mouseenter', function() {
+                const rating = parseInt(this.getAttribute('data-rating'));
+                updateModalStars(rating);
+            });
+        });
+
+        document.getElementById('modalStars').addEventListener('mouseleave', function() {
+            updateModalStars(selectedRating);
+        });
+
+        async function submitRating() {
+            if (selectedRating === 0) {
+                alert('Please select a rating');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/courses/${currentCourseId}/rating`, {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ rating: selectedRating })
+                });
+
+                if (response.ok) {
+                    closeRatingModal();
+                    // Reload rating for this course
+                    await loadCourseRating(currentCourseId);
+                } else {
+                    const errorText = await response.text();
+                    alert('Error: ' + errorText);
+                }
+            } catch (error) {
+                console.error('Error submitting rating:', error);
+                alert('Failed to submit rating. Please try again.');
+            }
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('ratingModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeRatingModal();
+            }
+        });
+    </script>
 </body>
 </html>
-

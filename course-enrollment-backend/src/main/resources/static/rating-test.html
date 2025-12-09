@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rating System Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        h2 {
+            color: #667eea;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-weight: 600;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        .result {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            border-left: 4px solid #667eea;
+        }
+        .error {
+            background: #fee;
+            border-left-color: #f00;
+        }
+        .success {
+            background: #efe;
+            border-left-color: #0f0;
+        }
+        input, select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 5px;
+        }
+        .stars {
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .star {
+            color: #ddd;
+            display: inline-block;
+            transition: color 0.2s;
+        }
+        .star.active {
+            color: #f59e0b;
+        }
+    </style>
+</head>
+<body>
+    <h1>🌟 Course Rating System - API Test</h1>
+
+    <div class="test-section">
+        <h2>1. Get Average Rating for Course</h2>
+        <label>Course ID: <input type="number" id="avgCourseId" value="1"></label>
+        <button onclick="testAverageRating()">Get Average Rating</button>
+        <div id="avgResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Get User's Rating (Requires Login)</h2>
+        <label>Course ID: <input type="number" id="userRatingCourseId" value="1"></label>
+        <button onclick="testUserRating()">Get My Rating</button>
+        <div id="userRatingResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Submit Rating (Requires Login & Enrollment)</h2>
+        <label>Course ID: <input type="number" id="submitCourseId" value="1"></label>
+        <label>Rating:
+            <div class="stars" id="ratingStars">
+                <span class="star" data-rating="1">★</span>
+                <span class="star" data-rating="2">★</span>
+                <span class="star" data-rating="3">★</span>
+                <span class="star" data-rating="4">★</span>
+                <span class="star" data-rating="5">★</span>
+            </div>
+        </label>
+        <input type="hidden" id="selectedRating" value="5">
+        <button onclick="testSubmitRating()">Submit Rating</button>
+        <div id="submitResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Test All Courses</h2>
+        <button onclick="testAllCourses()">Get All Courses with Ratings</button>
+        <div id="allCoursesResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Authentication Info</h2>
+        <p>To test user-specific endpoints (rating submission), you need to:</p>
+        <ol>
+            <li>Login at: <a href="http://localhost:8080/login" target="_blank">http://localhost:8080/login</a></li>
+            <li>Use credentials: student/password (or register a new student)</li>
+            <li>Enroll in a course first</li>
+            <li>Come back to this page and test</li>
+        </ol>
+        <button onclick="window.open('http://localhost:8080/login', '_blank')">Open Login Page</button>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8080/api';
+
+        // Star rating interaction
+        const stars = document.querySelectorAll('.star');
+        const ratingInput = document.getElementById('selectedRating');
+
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                const rating = this.getAttribute('data-rating');
+                ratingInput.value = rating;
+                updateStars(rating);
+            });
+        });
+
+        function updateStars(rating) {
+            stars.forEach(star => {
+                if (parseInt(star.getAttribute('data-rating')) <= parseInt(rating)) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        // Initialize with 5 stars
+        updateStars(5);
+
+        async function testAverageRating() {
+            const courseId = document.getElementById('avgCourseId').value;
+            const resultDiv = document.getElementById('avgResult');
+
+            try {
+                const response = await fetch(`${API_BASE}/courses/${courseId}/rating/avg`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+
+                resultDiv.className = 'result success';
+                resultDiv.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function testUserRating() {
+            const courseId = document.getElementById('userRatingCourseId').value;
+            const resultDiv = document.getElementById('userRatingResult');
+
+            try {
+                const response = await fetch(`${API_BASE}/courses/${courseId}/rating/me`, {
+                    credentials: 'include'
+                });
+
+                if (response.status === 401) {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = 'Error: Unauthorized. Please login first.';
+                    return;
+                }
+
+                const data = await response.json();
+                resultDiv.className = 'result success';
+                resultDiv.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function testSubmitRating() {
+            const courseId = document.getElementById('submitCourseId').value;
+            const rating = document.getElementById('selectedRating').value;
+            const resultDiv = document.getElementById('submitResult');
+
+            try {
+                const response = await fetch(`${API_BASE}/courses/${courseId}/rating`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ rating: parseInt(rating) })
+                });
+
+                if (response.status === 401) {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = 'Error: Unauthorized. Please login first.';
+                    return;
+                }
+
+                if (response.status === 403) {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = 'Error: You must be enrolled in this course to rate it.';
+                    return;
+                }
+
+                const data = await response.json();
+                resultDiv.className = 'result success';
+                resultDiv.textContent = 'Success! Rating submitted.\n' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function testAllCourses() {
+            const resultDiv = document.getElementById('allCoursesResult');
+
+            try {
+                const response = await fetch(`${API_BASE}/courses`, {
+                    credentials: 'include'
+                });
+                const courses = await response.json();
+
+                // Fetch ratings for each course
+                const coursesWithRatings = await Promise.all(
+                    courses.map(async (course) => {
+                        try {
+                            const ratingResponse = await fetch(`${API_BASE}/courses/${course.id}/rating/avg`, {
+                                credentials: 'include'
+                            });
+                            const ratingData = await ratingResponse.json();
+                            return {
+                                ...course,
+                                averageRating: ratingData.averageRating || 0,
+                                ratingMessage: ratingData.message
+                            };
+                        } catch (error) {
+                            return {
+                                ...course,
+                                averageRating: 'Error',
+                                ratingMessage: error.message
+                            };
+                        }
+                    })
+                );
+
+                resultDiv.className = 'result success';
+                resultDiv.textContent = JSON.stringify(coursesWithRatings, null, 2);
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = 'Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>
+

@@ -114,10 +114,14 @@ git push origin main
 | **Region** | Choose closest to you |
 | **Branch** | `main` |
 | **Root Directory** | `course-enrollment-backend` |
-| **Runtime** | `Java` |
-| **Build Command** | `./mvnw clean install -DskipTests` |
-| **Start Command** | `java -jar target/Course-Enrollment-System-0.0.1-SNAPSHOT.jar` |
+| **Environment** | `Docker` |
+| **Dockerfile Path** | `Dockerfile` (auto-detected) |
 | **Instance Type** | `Free` |
+
+**Important Notes:**
+- Render will automatically detect the Dockerfile in your repository
+- No need to specify build or start commands (Docker handles this)
+- The build will take ~5-10 minutes
 
 - [ ] ✅ Service configured!
 
@@ -299,8 +303,15 @@ FRONTEND:  https://_________________________.onrender.com
 - Or keep it as `8080`
 
 ❌ **"Build failed"**
-- Check Java version (should be 17)
-- Try adding `MAVEN_OPTS=-Xmx1024m`
+- Check Docker build logs for specific errors
+- Verify Dockerfile is in `course-enrollment-backend` folder
+- Check if Maven dependencies can be downloaded
+- Try adding `MAVEN_OPTS=-Xmx1024m` environment variable
+
+❌ **"Docker build timeout"**
+- Render free tier has build time limits
+- Ensure `.dockerignore` file exists to speed up builds
+- Maven dependencies are cached in Dockerfile for faster subsequent builds
 
 ### Frontend Can't Connect to Backend
 

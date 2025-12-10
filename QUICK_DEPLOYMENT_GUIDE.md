@@ -57,8 +57,14 @@ jdbc:mysql://containers-us-west-123.railway.app:7890/railway
 |-------|-------|
 | Name | `course-enrollment-backend` |
 | Root Directory | `course-enrollment-backend` |
-| Build Command | `./mvnw clean install -DskipTests` |
-| Start Command | `java -jar target/Course-Enrollment-System-0.0.1-SNAPSHOT.jar` |
+| Environment | `Docker` |
+| Dockerfile Path | `Dockerfile` (auto-detected) |
+| Instance Type | `Free` |
+
+**Important:**
+- Render auto-detects Dockerfile
+- No build/start commands needed
+- Docker handles everything
 
 ### Environment Variables:
 
@@ -177,11 +183,13 @@ Fill this out as you deploy:
 ## ⚡ Quick Troubleshooting
 
 ### Backend Build Failed
-```powershell
-# Check Java version in Render
-# Should be Java 17
-# Add this to environment variables if needed:
-JAVA_VERSION=17
+```
+# Check Docker build logs in Render
+# Common fixes:
+1. Verify Dockerfile exists in course-enrollment-backend/
+2. Check .dockerignore file exists
+3. Ensure Maven can download dependencies
+4. Wait and retry (temporary network issues)
 ```
 
 ### Can't Connect to Database

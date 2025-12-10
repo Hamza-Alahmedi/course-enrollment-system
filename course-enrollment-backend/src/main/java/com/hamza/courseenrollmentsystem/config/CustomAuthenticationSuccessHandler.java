@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -18,6 +19,9 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
     @Autowired
     private UserRepository userRepository;
+
+    @Value("${frontend.url:https://course-enrollment-frontend-c9mr.onrender.com}")
+    private String frontendUrl;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
@@ -34,7 +38,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             User student = userRepository.findByEmail(email).orElse(null);
             if (student != null) {
                 // Redirect to React frontend with student ID as query parameter
-                response.sendRedirect("http://localhost:5173?studentId=" + student.getId());
+                response.sendRedirect(frontendUrl + "?studentId=" + student.getId());
             } else {
                 response.sendRedirect("/student/dashboard");
             }

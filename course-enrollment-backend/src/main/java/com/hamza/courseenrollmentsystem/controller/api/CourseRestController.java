@@ -13,7 +13,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/courses")
-@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+@CrossOrigin(origins = "https://course-enrollment-frontend-c9mr.onrender.com", allowCredentials = "true")
 public class CourseRestController {
 
     private final CourseService courseService;

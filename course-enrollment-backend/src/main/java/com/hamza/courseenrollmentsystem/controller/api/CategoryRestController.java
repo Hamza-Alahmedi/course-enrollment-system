@@ -13,7 +13,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/categories")
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:5173"}, allowCredentials = "true")
+@CrossOrigin(origins = "https://course-enrollment-frontend-c9mr.onrender.com", allowCredentials = "true")
 public class CategoryRestController {
 
     private final CategoryService categoryService;

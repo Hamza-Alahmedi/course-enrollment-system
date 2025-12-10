@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/students")
-@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+@CrossOrigin(origins = "https://course-enrollment-frontend-c9mr.onrender.com", allowCredentials = "true")
 public class StudentRestController {
 
     private final UserRepository userRepository;

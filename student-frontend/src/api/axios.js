@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// Use environment variable for API URL, fallback to localhost for development
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+// Use environment variable for API URL, fallback to production backend
+const API_URL = import.meta.env.VITE_API_URL || 'https://course-enrollment-system-dxav.onrender.com';
 
 // Create axios instance with default config
 const axiosInstance = axios.create({

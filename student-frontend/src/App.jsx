@@ -103,7 +103,7 @@ function LoginPage({ onLogin }) {
           <button type="submit" className="login-btn">Login</button>
         </form>
         <p className="register-link">
-          Don't have an account? <a href="http://localhost:8080/register">Register here</a>
+          Don't have an account? <a href="https://course-enrollment-system-dxav.onrender.com/register">Register here</a>
         </p>
       </div>
     </div>

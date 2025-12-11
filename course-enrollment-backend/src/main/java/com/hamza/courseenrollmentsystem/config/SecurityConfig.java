@@ -47,6 +47,11 @@ public class SecurityConfig {
                         // All other routes are open for development
                         .anyRequest().permitAll()
                 )
+                .sessionManagement(session -> session
+                        .sessionFixation().migrateSession()
+                        .maximumSessions(5)
+                        .maxSessionsPreventsLogin(false)
+                )
                 .formLogin(form -> form
                         .loginPage("/login")
                         .usernameParameter("email")  // Use email instead of username

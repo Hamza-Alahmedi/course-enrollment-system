@@ -3,6 +3,8 @@ package com.hamza.courseenrollmentsystem.controller.api;
 import com.hamza.courseenrollmentsystem.dto.AverageRatingDto;
 import com.hamza.courseenrollmentsystem.dto.RatingDto;
 import com.hamza.courseenrollmentsystem.service.RatingService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,11 +14,14 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/courses")
 @CrossOrigin(
-    originPatterns = "*",
+    origins = "https://course-enrollment-frontend-c9mr.onrender.com",
     allowCredentials = "true",
+    allowedHeaders = "*",
     methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS}
 )
 public class RatingApiController {
+
+    private static final Logger logger = LoggerFactory.getLogger(RatingApiController.class);
 
     @Autowired
     private RatingService ratingService;
@@ -66,23 +71,36 @@ public class RatingApiController {
             @RequestBody RatingDto ratingDto,
             Authentication authentication) {
         try {
+            logger.info("Rating request received for course ID: {}", id);
+            logger.info("Authentication object: {}", authentication);
+            logger.info("Authentication name: {}", authentication != null ? authentication.getName() : "null");
+            logger.info("Is authenticated: {}", authentication != null ? authentication.isAuthenticated() : "false");
+
             if (authentication == null || authentication.getName() == null) {
+                logger.error("Authentication failed - authentication is null or name is null");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body("User not authenticated");
+                        .body("User not authenticated. Please login again.");
             }
 
             if (ratingDto.getRating() == null) {
+                logger.error("Rating value is null");
                 return ResponseEntity.badRequest().body("Rating is required");
             }
 
             String userEmail = authentication.getName();
+            logger.info("Processing rating for user: {}, course: {}, rating: {}", userEmail, id, ratingDto.getRating());
+
             RatingDto result = ratingService.saveRating(id, userEmail, ratingDto.getRating());
+            logger.info("Rating saved successfully");
             return ResponseEntity.ok(result);
         } catch (IllegalArgumentException e) {
+            logger.error("Invalid argument: {}", e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (RuntimeException e) {
+            logger.error("Runtime exception: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         } catch (Exception e) {
+            logger.error("Error saving rating: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error saving rating: " + e.getMessage());
         }

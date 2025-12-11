@@ -47,17 +47,19 @@ function LoginPage({ onLogin }) {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:8080/api/auth/login', {
+      const response = await fetch('https://course-enrollment-system-dxav.onrender.com/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
+        credentials: 'include', // Important: send cookies for session
         body: JSON.stringify({ email, password })
       });
 
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem('studentId', data.studentId || data.id);
+        localStorage.setItem('userEmail', data.email); // Store email for authentication
         if (data.token) {
           localStorage.setItem('token', data.token);
         }

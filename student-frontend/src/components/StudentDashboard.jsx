@@ -168,9 +168,17 @@ function StudentDashboard() {
     return myCourses.some(course => course.id === courseId);
   };
 
-  const handleLogout = () => {
-    localStorage.clear();
-    window.location.href = '/';
+  const handleLogout = async () => {
+    try {
+      // Call logout API to invalidate session on backend
+      await axios.post('/api/auth/logout');
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      // Clear local storage and redirect regardless of API call result
+      localStorage.clear();
+      window.location.href = '/';
+    }
   };
 
   const showNotification = (message, type) => {

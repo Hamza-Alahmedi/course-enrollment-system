@@ -12,10 +12,17 @@ const axiosInstance = axios.create({
   },
 });
 
-// Add request interceptor for debugging
+// Add request interceptor for debugging and JWT token
 axiosInstance.interceptors.request.use(
   (config) => {
     console.log('Making request to:', config.url);
+
+    // Add JWT token to headers if it exists
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
     return config;
   },
   (error) => {

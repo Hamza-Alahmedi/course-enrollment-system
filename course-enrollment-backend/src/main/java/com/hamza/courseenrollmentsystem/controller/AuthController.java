@@ -2,6 +2,7 @@ package com.hamza.courseenrollmentsystem.controller;
 
 import com.hamza.courseenrollmentsystem.entity.User;
 import com.hamza.courseenrollmentsystem.service.UserService;
+import com.hamza.courseenrollmentsystem.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,9 @@ public class AuthController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> register(@RequestBody User user) {
@@ -71,6 +75,9 @@ public class AuthController {
             HttpSession session = request.getSession(true);
             session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
 
+            // Generate JWT token
+            String token = jwtUtil.generateToken(user.getEmail(), user.getRole(), user.getId());
+
             response.put("success", true);
             response.put("message", "Login successful! Welcome " + user.getUsername());
             response.put("studentId", user.getId());
@@ -78,6 +85,7 @@ public class AuthController {
             response.put("username", user.getUsername());
             response.put("email", user.getEmail());
             response.put("role", user.getRole());
+            response.put("token", token);  // Add JWT token
             return ResponseEntity.ok(response);
         } else {
             response.put("success", false);

@@ -29,7 +29,25 @@ public class UserService {
     }
 
     public boolean checkPassword(String rawPassword, String encodedPassword) {
-        // Use BCrypt to check password
-        return passwordEncoder.matches(rawPassword, encodedPassword);
+        // Check if password is already BCrypt encoded (starts with $2a$ or $2b$)
+        if (encodedPassword.startsWith("$2a$") || encodedPassword.startsWith("$2b$")) {
+            // Use BCrypt to check password
+            return passwordEncoder.matches(rawPassword, encodedPassword);
+        } else {
+            // Legacy plain text password - compare directly
+            return rawPassword.equals(encodedPassword);
+        }
+    }
+
+    /**
+     * Upgrade plain text password to BCrypt hash
+     * Call this after successful plain text authentication
+     */
+    public void upgradePasswordToBCrypt(User user, String plainPassword) {
+        if (!user.getPassword().startsWith("$2a$") && !user.getPassword().startsWith("$2b$")) {
+            user.setPassword(passwordEncoder.encode(plainPassword));
+            userRepository.save(user);
+            System.out.println("✅ Upgraded password to BCrypt for user: " + user.getEmail());
+        }
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -27,10 +28,18 @@ public class SecurityConfig {
     private CustomAuthenticationSuccessHandler successHandler;
 
     @Autowired
+    private CustomAuthenticationProvider customAuthenticationProvider;
+
+    @Autowired
     private CorsConfigurationSource corsConfigurationSource;
 
     @Value("${frontend.url:https://course-enrollment-frontend-c9mr.onrender.com}")
     private String frontendUrl;
+
+    @Autowired
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(customAuthenticationProvider);
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

@@ -4,15 +4,17 @@ FROM maven:3.9-eclipse-temurin-17 AS build
 # Set working directory
 WORKDIR /app
 
-# Copy pom.xml and download dependencies (for caching)
+# Copy pom.xml first to leverage Docker cache
 COPY pom.xml .
-RUN mvn dependency:go-offline -B
+
+# Download dependencies with forced updates
+RUN mvn dependency:resolve dependency:resolve-plugins -B -U
 
 # Copy source code
 COPY src ./src
 
-# Build the application (skip tests for faster build)
-RUN mvn clean package -DskipTests
+# Build the application (clean build, skip tests, update snapshots)
+RUN mvn clean package -DskipTests -U
 
 # Use smaller JRE image for running
 FROM eclipse-temurin:17-jre-alpine

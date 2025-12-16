@@ -2,7 +2,6 @@ package com.hamza.courseenrollmentsystem.config;
 
 import com.hamza.courseenrollmentsystem.entity.User;
 import com.hamza.courseenrollmentsystem.repository.UserRepository;
-import com.hamza.courseenrollmentsystem.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -23,9 +22,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     private UserRepository userRepository;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Override
@@ -42,10 +38,23 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         User user = userOptional.get();
 
         // Check password (handles both plain text and BCrypt)
-        if (userService.checkPassword(password, user.getPassword())) {
-            // Upgrade password if it's plain text
-            userService.upgradePasswordToBCrypt(user, password);
+        boolean passwordMatches;
+        if (user.getPassword().startsWith("$2a$") || user.getPassword().startsWith("$2b$")) {
+            // BCrypt password
+            passwordMatches = passwordEncoder.matches(password, user.getPassword());
+        } else {
+            // Plain text password
+            passwordMatches = password.equals(user.getPassword());
 
+            // Upgrade to BCrypt if plain text
+            if (passwordMatches) {
+                user.setPassword(passwordEncoder.encode(password));
+                userRepository.save(user);
+                System.out.println("✅ Upgraded password to BCrypt for user: " + user.getEmail());
+            }
+        }
+
+        if (passwordMatches) {
             return new UsernamePasswordAuthenticationToken(
                     email,
                     password,

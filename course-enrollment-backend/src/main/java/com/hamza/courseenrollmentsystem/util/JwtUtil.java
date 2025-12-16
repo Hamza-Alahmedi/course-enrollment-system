@@ -80,10 +80,9 @@ public class JwtUtil {
 
     // Extract all claims
     private Claims extractAllClaims(String token) {
-        // Use the older parser API (parser()) for compatibility with the jjwt version available
-        byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
-        return Jwts.parser()
-                .setSigningKey(keyBytes)
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
                 .parseClaimsJws(token)
                 .getBody();
     }

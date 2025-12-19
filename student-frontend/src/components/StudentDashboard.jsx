@@ -175,9 +175,9 @@ function StudentDashboard() {
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
-      // Clear local storage and redirect regardless of API call result
+      // Clear local storage and redirect to backend login page
       localStorage.clear();
-      window.location.href = '/';
+      window.location.href = 'https://course-enrollment-system-dxav.onrender.com/login';
     }
   };
 

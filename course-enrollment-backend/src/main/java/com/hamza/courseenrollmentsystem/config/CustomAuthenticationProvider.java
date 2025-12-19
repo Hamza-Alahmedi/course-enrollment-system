@@ -9,7 +9,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -20,9 +19,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -37,22 +33,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         User user = userOptional.get();
 
-        // Check password (handles both plain text and BCrypt)
-        boolean passwordMatches;
-        if (user.getPassword().startsWith("$2a$") || user.getPassword().startsWith("$2b$")) {
-            // BCrypt password
-            passwordMatches = passwordEncoder.matches(password, user.getPassword());
-        } else {
-            // Plain text password
-            passwordMatches = password.equals(user.getPassword());
-
-            // Upgrade to BCrypt if plain text
-            if (passwordMatches) {
-                user.setPassword(passwordEncoder.encode(password));
-                userRepository.save(user);
-                System.out.println("✅ Upgraded password to BCrypt for user: " + user.getEmail());
-            }
-        }
+        // Plain text password comparison (no encryption for now)
+        boolean passwordMatches = password.equals(user.getPassword());
 
         if (passwordMatches) {
             return new UsernamePasswordAuthenticationToken(
@@ -70,4 +52,3 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         return UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication);
     }
 }
-

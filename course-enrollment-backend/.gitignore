@@ -37,3 +37,27 @@ build/
 .DS_Store
 Thumbs.db
 
+### Documentation (keep only REST_API_DOCUMENTATION.md) ###
+CORS_FIX_SUMMARY.md
+ERRORS_FIXED_REPORT.md
+FIXES_APPLIED.md
+FIX_SUMMARY.md
+POSTMAN_TESTING_GUIDE.md
+QUICK_START.txt
+QUICK_START_GUIDE.md
+RATING_FEATURE_GUIDE.md
+REACT_EXAMPLE.jsx
+SCHEMA_FIX_GUIDE.md
+
+### Batch Files ###
+*.bat
+diagnose-and-start.bat
+fix-404-and-start.bat
+rebuild-and-start.bat
+run-rating-app.bat
+safe-start.bat
+START-FIXED.bat
+
+### SQL Scripts (keep for reference but don't deploy) ###
+DB_FIX_BIGINT.sql
+fix-schema.sql

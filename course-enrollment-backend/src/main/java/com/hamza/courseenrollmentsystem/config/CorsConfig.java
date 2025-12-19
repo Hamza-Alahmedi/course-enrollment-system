@@ -10,7 +10,9 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
@@ -19,25 +21,50 @@ public class CorsConfig implements WebMvcConfigurer {
     private String allowedOrigins;
 
     private List<String> getAllowedOriginsList() {
-        return Arrays.asList(allowedOrigins.split(","));
+        return Arrays.stream(allowedOrigins.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.toList());
     }
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/api/**")
-                .allowedOrigins(getAllowedOriginsList().toArray(new String[0]))
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
-                .allowedHeaders("*")
-                .allowCredentials(true)
-                .maxAge(3600);
+        List<String> origins = getAllowedOriginsList();
+        boolean wildcard = origins.size() == 1 && "*".equals(origins.get(0));
+
+        if (wildcard) {
+            // If wildcard is used, we cannot allow credentials. Use patterns instead if needed.
+            registry.addMapping("/api/**")
+                    .allowedOriginPatterns("*")
+                    .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
+                    .allowedHeaders("*")
+                    .allowCredentials(false)
+                    .maxAge(3600);
+        } else {
+            registry.addMapping("/api/**")
+                    .allowedOrigins(origins.toArray(new String[0]))
+                    .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
+                    .allowedHeaders("*")
+                    .allowCredentials(true)
+                    .maxAge(3600);
+        }
     }
 
     @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.setAllowedOrigins(getAllowedOriginsList());
+        List<String> origins = getAllowedOriginsList();
+        boolean wildcard = origins.size() == 1 && "*".equals(origins.get(0));
+
+        if (wildcard) {
+            config.setAllowCredentials(false);
+            config.setAllowedOriginPatterns(Collections.singletonList("*"));
+        } else {
+            config.setAllowCredentials(true);
+            config.setAllowedOrigins(origins);
+        }
+
         config.setAllowedHeaders(Arrays.asList("*"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setMaxAge(3600L);
@@ -45,6 +72,3 @@ public class CorsConfig implements WebMvcConfigurer {
         return new CorsFilter(source);
     }
 }
-
-
-

@@ -207,7 +207,7 @@
                             </span>
                         </td>
                         <td>
-                            <div class="rating-display" th:attr="data-course-id=${course.id}">
+                            <div class="rating-display" th:data-course-id="${course.id}">
                                 <div class="stars-small">
                                     <span class="star-small">★</span>
                                     <span class="star-small">★</span>
@@ -229,8 +229,8 @@
                                 <a th:href="@{/admin/courses/edit/{id}(id=${course.id})}" class="pill-btn pill-edit">Edit</a>
 
                                 <a th:href="@{/admin/courses/delete/{id}(id=${course.id})}"
-                                   class="pill-btn pill-delete"
-                                   th:attr="data-title=${course.title}"
+                                   class="pill-btn pill-delete delete-course"
+                                   th:data-title="${course.title}">
                                    onclick="return confirm('Delete ' + this.dataset.title + '?');">
                                     Delete
                                 </a>
@@ -291,7 +291,13 @@
             if (ratingText) {
                 ratingText.textContent = `(${avgRating.toFixed(1)})`;
             }
-        }
-    </script>
-</body>
-</html>
+
+        // Delete confirmation
+        document.querySelectorAll('.delete-course').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                const courseTitle = this.getAttribute('data-title');
+                if (!confirm('Delete course: ' + courseTitle + '?')) {
+                    e.preventDefault();
+                }
+            });
+        });

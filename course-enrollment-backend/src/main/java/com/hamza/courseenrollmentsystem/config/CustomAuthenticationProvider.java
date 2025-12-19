@@ -9,6 +9,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -19,6 +20,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     @Autowired
     private UserRepository userRepository;
+
+    // Create a local instance to avoid circular dependency
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -33,8 +37,21 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         User user = userOptional.get();
 
-        // Plain text password comparison (no encryption for now)
-        boolean passwordMatches = password.equals(user.getPassword());
+        // Check password - support both plain text (legacy) and BCrypt
+        boolean passwordMatches;
+        if (user.getPassword().startsWith("$2a$") || user.getPassword().startsWith("$2b$")) {
+            // BCrypt encrypted password
+            passwordMatches = passwordEncoder.matches(password, user.getPassword());
+        } else {
+            // Plain text password (backward compatibility)
+            passwordMatches = password.equals(user.getPassword());
+
+            // Auto-upgrade to BCrypt on successful login
+            if (passwordMatches) {
+                user.setPassword(passwordEncoder.encode(password));
+                userRepository.save(user);
+            }
+        }
 
         if (passwordMatches) {
             return new UsernamePasswordAuthenticationToken(

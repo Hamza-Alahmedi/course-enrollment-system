@@ -81,6 +81,9 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
+        // BCryptPasswordEncoder for password encryption
+        // Note: Actual encryption is handled in UserService and CustomAuthenticationProvider
+        // using local instances to avoid circular dependencies
         return new BCryptPasswordEncoder();
     }
 
@@ -90,7 +93,7 @@ public class SecurityConfig {
             User user = userRepository.findByEmail(email)
                     .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
 
-            // Return the stored password as-is (plain text for now)
+            // Return the stored password as-is (BCrypt will handle verification)
             return new org.springframework.security.core.userdetails.User(
                     user.getEmail(),
                     user.getPassword(),

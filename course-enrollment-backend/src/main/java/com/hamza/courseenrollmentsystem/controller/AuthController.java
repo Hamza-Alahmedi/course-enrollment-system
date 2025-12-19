@@ -60,7 +60,7 @@ public class AuthController {
 
         User user = userOptional.get();
         if (userService.checkPassword(loginRequest.getPassword(), user.getPassword())) {
-            // Plain-text password authentication (development mode)
+            // Password authentication successful (supports both BCrypt and plain text)
 
             // Create Spring Security authentication
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(

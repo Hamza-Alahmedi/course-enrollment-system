@@ -230,7 +230,7 @@
 
                                 <a th:href="@{/admin/courses/delete/{id}(id=${course.id})}"
                                    class="pill-btn pill-delete delete-course"
-                                   th:data-title="${course.title}">
+                                   th:data-title="${course.title}"
                                    onclick="return confirm('Delete ' + this.dataset.title + '?');">
                                     Delete
                                 </a>
@@ -264,10 +264,20 @@
         async function loadCourseRating(courseId, displayElement) {
             try {
                 const response = await fetch(`/api/courses/${courseId}/rating/avg`);
-                const data = await response.json();
 
-                if (data.averageRating !== null && data.averageRating > 0) {
+                if (!response.ok) {
+                    console.error(`Failed to fetch rating for course ${courseId}: ${response.status}`);
+                    return;
+                }
+
+                const data = await response.json();
+                console.log(`Rating data for course ${courseId}:`, data);
+
+                // Display rating if it exists (even if it's 0)
+                if (data.averageRating !== null && data.averageRating !== undefined) {
                     updateRatingDisplay(displayElement, data.averageRating);
+                } else {
+                    console.log(`No rating data for course ${courseId}`);
                 }
             } catch (error) {
                 console.error('Error loading rating for course ' + courseId + ':', error);
@@ -291,6 +301,7 @@
             if (ratingText) {
                 ratingText.textContent = `(${avgRating.toFixed(1)})`;
             }
+        }
 
         // Delete confirmation
         document.querySelectorAll('.delete-course').forEach(function(btn) {
@@ -301,3 +312,6 @@
                 }
             });
         });
+    </script>
+</body>
+</html>
